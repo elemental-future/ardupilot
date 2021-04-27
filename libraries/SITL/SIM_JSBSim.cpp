@@ -339,6 +339,8 @@ void JSBSim::send_servos(const struct sitl_input &input)
     float throttle_r  = filtered_servo_range(input, 4);
     float throttle_l  = filtered_servo_range(input, 5);
     float throttle_m  = filtered_servo_range(input, 6);
+    float tilt_r  = filtered_servo_range(input, 7);
+    float tilt_l  = filtered_servo_range(input, 8);
     if (frame == FRAME_ELEVON) {
         // fake an elevon plane
         float ch1 = aileron;
@@ -363,13 +365,16 @@ void JSBSim::send_servos(const struct sitl_input &input)
              "set fcs/right-engine-throttle-norm %f\n"
              "set fcs/left-engine-throttle-norm %f\n"
              "set fcs/main-engine-throttle-norm %f\n"
+             "set fcs/right-engine-pitch-cmd-norm %f\n"
+             "set fcs/left-engine-pitch-cmd-norm %f\n"
              "set atmosphere/psiw-rad %f\n"
              "set atmosphere/wind-mag-fps %f\n"
              "set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps %f\n"
              "set atmosphere/turbulence/milspec/severity %f\n"
              "iterate 1\n",
-             aileron, elevator, rudder, throttle, throttle_r,
-             throttle_l, throttle_m,
+             aileron, elevator, rudder, throttle,
+             throttle_r, throttle_l, throttle_m,
+             tilt_r, tilt_l,
              radians(input.wind.direction),
              wind_speed_fps,
              wind_speed_fps/3,
