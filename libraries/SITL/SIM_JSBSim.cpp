@@ -62,6 +62,7 @@ JSBSim::JSBSim(const char *frame_str) :
     }
     control_port = 5505 + instance*10;
     fdm_port = 5504 + instance*10;
+    //python_port = 6000 + instance*10;
     num_motors = 2;
 
     printf("JSBSim backend started: control_port=%u fdm_port=%u\n",
@@ -150,7 +151,7 @@ bool JSBSim::create_templates(void)
             "<initialize name=\"Start up location\">\n"
             "  <latitude unit=\"DEG\" type=\"geodetic\"> %f </latitude>\n"
             "  <longitude unit=\"DEG\"> %f </longitude>\n"
-            "  <altitude unit=\"M\"> 1.3 </altitude>\n"
+            "  <altitude unit=\"M\"> 0 </altitude>\n"
             "  <vt unit=\"FT/SEC\"> 0.0 </vt>\n"
             "  <gamma unit=\"DEG\"> 0.0 </gamma>\n"
             "  <phi unit=\"DEG\"> 0.0 </phi>\n"
@@ -332,15 +333,16 @@ bool JSBSim::open_fdm_socket(void)
 void JSBSim::send_servos(const struct sitl_input &input)
 {
     char *buf = nullptr;
-    float aileron  = filtered_servo_angle(input, 0);
+    float throttle_m  = filtered_servo_range(input, 0);
     float elevator = filtered_servo_angle(input, 1);
-    float throttle = filtered_servo_range(input, 2);
-    float rudder   = filtered_servo_angle(input, 3);
+    float rudder   = filtered_servo_angle(input, 2);
+    //float tilt_r  = filtered_servo_angle(input, 3);
     float throttle_r  = filtered_servo_range(input, 4);
-    float throttle_l  = filtered_servo_range(input, 5);
-    float throttle_m  = filtered_servo_range(input, 6);
-    float tilt_r  = filtered_servo_range(input, 7);
-    float tilt_l  = filtered_servo_range(input, 8);
+    //float tilt_l  = filtered_servo_angle(input, 5);
+    float throttle_l  = filtered_servo_range(input, 6);
+    //float throttle  = filtered_servo_angle(input, 7);
+    //float throttle = filtered_servo_range(input, 8);
+    /*
     if (frame == FRAME_ELEVON) {
         // fake an elevon plane
         float ch1 = aileron;
@@ -356,25 +358,27 @@ void JSBSim::send_servos(const struct sitl_input &input)
         elevator = (ch2-ch1)/2.0f;
         rudder   = (ch2+ch1)/2.0f;
     }
+    */
     float wind_speed_fps = input.wind.speed / FEET_TO_METERS;
     asprintf(&buf,
-             "set fcs/aileron-cmd-norm %f\n"
+             //"set fcs/aileron-cmd-norm %f\n"
              "set fcs/elevator-cmd-norm %f\n"
              "set fcs/rudder-cmd-norm %f\n"
-             "set fcs/throttle-cmd-norm %f\n"
+             //"set fcs/throttle-cmd-norm %f\n"
              "set fcs/right-engine-throttle-norm %f\n"
              "set fcs/left-engine-throttle-norm %f\n"
              "set fcs/main-engine-throttle-norm %f\n"
-             "set fcs/right-engine-pitch-cmd-norm %f\n"
-             "set fcs/left-engine-pitch-cmd-norm %f\n"
+             //"set fcs/right-engine-pitch-cmd-norm %f\n"
+             //"set fcs/left-engine-pitch-cmd-norm %f\n"
              "set atmosphere/psiw-rad %f\n"
              "set atmosphere/wind-mag-fps %f\n"
              "set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps %f\n"
              "set atmosphere/turbulence/milspec/severity %f\n"
              "iterate 1\n",
-             aileron, elevator, rudder, throttle,
-             throttle_r, throttle_l, throttle_m,
-             tilt_r, tilt_l,
+             elevator, rudder,
+	     throttle_r, throttle_l,
+	     throttle_m,
+	     //tilt_r, tilt_l,
              radians(input.wind.direction),
              wind_speed_fps,
              wind_speed_fps/3,
