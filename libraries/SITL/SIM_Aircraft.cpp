@@ -369,6 +369,12 @@ void Aircraft::fill_fdm(struct sitl_fdm &fdm)
     fdm.scanner.points = scanner.points;
     fdm.scanner.ranges = scanner.ranges;
 
+    // Copy data from JSBSim to Elemental backport
+    fdm.elemental.elevator 	= elemental.elevator;
+    fdm.elemental.rudder 	= elemental.rudder;
+    fdm.elemental.aileron 	= elemental.aileron;
+    fdm.elemental.throttle 	= elemental.throttle;
+
     // copy rangefinder
     memcpy(fdm.rangefinder_m, rangefinder_m, sizeof(fdm.rangefinder_m));
 

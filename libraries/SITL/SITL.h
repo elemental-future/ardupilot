@@ -68,6 +68,18 @@ struct sitl_fdm {
     Vector3f bodyMagField;  // Truth XYZ magnetic field vector in body-frame. Includes motor interference. Units are milli-Gauss.
     Vector3f angAccel; // Angular acceleration in degrees/s/s about the XYZ body axes
 
+    // Struct to store data that is only relevant to Elemental and added
+    // to the SITL
+    struct {
+		double tit[12];
+		double elevator;
+		double rudder;
+		double aileron;
+		double throttle;
+		double left_flap;
+		double right_flap;
+    } elemental;
+
     struct {
         // data from simulated laser scanner, if available
         struct vector3f_array points;

@@ -580,18 +580,26 @@ void SITL_State::_output_to_flightgear(void)
     fdm.phi   = radians(sfdm.rollDeg);
     fdm.theta = radians(sfdm.pitchDeg);
     fdm.psi   = radians(sfdm.yawDeg);
+
+    // Bring Elemental-specific data to flightgear
+    fdm.elevator 		= sfdm.elemental.elevator;
+    fdm.rudder 			= sfdm.elemental.rudder;
+    fdm.left_aileron 	= sfdm.elemental.aileron;
+    //fdm.throttle 		= sfdm.throttle;
+
     if (_vehicle == ArduCopter) {
         fdm.num_engines = 4;
         for (uint8_t i=0; i<4; i++) {
             fdm.rpm[i] = constrain_float((pwm_output[i]-1000), 0, 1000);
         }
     } else {
-        fdm.num_engines = 4;
-        fdm.rpm[0] = constrain_float((pwm_output[2]-1000)*3, 0, 3000);
+        fdm.num_engines = 3;
+        fdm.rpm[0] = sfdm.rpm[0];
+        //fdm.rpm[0] = constrain_float((pwm_output[2]-1000)*3, 0, 3000);
         // for quadplane
-        fdm.rpm[1] = constrain_float((pwm_output[5]-1000)*12, 0, 12000);
-        fdm.rpm[2] = constrain_float((pwm_output[6]-1000)*12, 0, 12000);
-        fdm.rpm[3] = constrain_float((pwm_output[7]-1000)*12, 0, 12000);
+        fdm.rpm[1] = sfdm.rpm[1];
+        fdm.rpm[2] = sfdm.rpm[2];
+        //fdm.rpm[3] = sfdm.rpm[3];
     }
     fdm.ByteSwap();
 

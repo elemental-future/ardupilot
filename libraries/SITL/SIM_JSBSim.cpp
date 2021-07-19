@@ -149,9 +149,9 @@ bool JSBSim::create_templates(void)
     fprintf(f,
             "<?xml version=\"1.0\"?>\n"
             "<initialize name=\"Start up location\">\n"
-            "  <latitude unit=\"DEG\" type=\"geodetic\"> %f </latitude>\n"
-            "  <longitude unit=\"DEG\"> %f </longitude>\n"
-            "  <altitude unit=\"M\"> 0 </altitude>\n"
+            "  <latitude unit=\"DEG\" type=\"geodetic\"> %.10f </latitude>\n"
+            "  <longitude unit=\"DEG\"> %.10f </longitude>\n"
+            "  <altitude unit=\"M\"> 1.3 </altitude>\n"
             "  <vt unit=\"FT/SEC\"> 0.0 </vt>\n"
             "  <gamma unit=\"DEG\"> 0.0 </gamma>\n"
             "  <phi unit=\"DEG\"> 0.0 </phi>\n"
@@ -376,9 +376,9 @@ void JSBSim::send_servos(const struct sitl_input &input)
              "set atmosphere/turbulence/milspec/severity %f\n"
              "iterate 1\n",
              elevator, rudder,
-	     throttle_r, throttle_l,
-	     throttle_m,
-	     //tilt_r, tilt_l,
+			 throttle_r, throttle_l,
+			 throttle_m,
+			 //tilt_r, tilt_l,
              radians(input.wind.direction),
              wind_speed_fps,
              wind_speed_fps/3,
@@ -444,8 +444,8 @@ void JSBSim::recv_fdm(const struct sitl_input &input)
     gyro = Vector3f(p, q, r);
 
     velocity_ef = Vector3f(fdm.v_north, fdm.v_east, fdm.v_down) * FEET_TO_METERS;
-    location.lat = degrees(fdm.latitude) * 1.0e7;
-    location.lng = degrees(fdm.longitude) * 1.0e7;
+    location.lat = fdm.latitude * 180.e7 / 3.141592653538979323846;
+    location.lng = fdm.longitude * 180.e7 / 3.141592653538979323846;
     location.alt = fdm.agl*100 + home.alt;
     dcm.from_euler(fdm.phi, fdm.theta, fdm.psi);
     airspeed = fdm.vcas * KNOTS_TO_METERS_PER_SECOND;
@@ -456,6 +456,12 @@ void JSBSim::recv_fdm(const struct sitl_input &input)
 
     rpm[0] = fdm.rpm[0];
     rpm[1] = fdm.rpm[1];
+    rpm[2] = fdm.rpm[2];
+
+    // Save Elemental data comingo from JSBSim
+    elemental.elevator 	= fdm.elevator;
+    elemental.aileron  	= fdm.left_aileron;
+    elemental.rudder	= fdm.rudder;
 
     time_now_us = fdm.cur_time;
 }

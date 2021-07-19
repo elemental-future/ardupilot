@@ -176,6 +176,14 @@ protected:
     float local_ground_level;            // ground level at local position
     bool lock_step_scheduled;
 
+    // Elemental backport to get data into FGFS
+    struct {
+		float elevator;
+		float aileron;
+		float rudder;
+		float throttle;
+    } elemental;
+
     // battery model
     Battery battery;
 
