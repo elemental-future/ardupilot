@@ -341,12 +341,16 @@ void JSBSim::send_servos(const struct sitl_input &input)
     float throttle_m  = filtered_servo_range(input, 0);
     float elevator = filtered_servo_angle(input, 1);
     float rudder   = filtered_servo_angle(input, 2);
-    //float tilt_r  = filtered_servo_angle(input, 3);
+    float tilt_r  = filtered_servo_angle(input, 3);
     float throttle_r  = filtered_servo_range(input, 4);
-    //float tilt_l  = filtered_servo_angle(input, 5);
+    float tilt_l  = filtered_servo_angle(input, 5);
     float throttle_l  = filtered_servo_range(input, 6);
-    //float throttle  = filtered_servo_angle(input, 7);
-    //float throttle = filtered_servo_range(input, 8);
+    // //float throttle  = filtered_servo_angle(input, 7);
+    // //float throttle = filtered_servo_range(input, 8);
+    // float aileron  = filtered_servo_angle(input, 0);
+    // float elevator = filtered_servo_angle(input, 1);
+    // float throttle = filtered_servo_range(input, 2);
+    // float rudder   = filtered_servo_angle(input, 3);
     /*
     if (frame == FRAME_ELEVON) {
         // fake an elevon plane
@@ -366,24 +370,27 @@ void JSBSim::send_servos(const struct sitl_input &input)
     */
     float wind_speed_fps = input.wind.speed / FEET_TO_METERS;
     asprintf(&buf,
-             //"set fcs/aileron-cmd-norm %f\n"
              "set fcs/elevator-cmd-norm %f\n"
              "set fcs/rudder-cmd-norm %f\n"
-             //"set fcs/throttle-cmd-norm %f\n"
+             // "set fcs/throttle-cmd-norm %f\n"
+
              "set fcs/right-engine-throttle-norm %f\n"
              "set fcs/left-engine-throttle-norm %f\n"
              "set fcs/main-engine-throttle-norm %f\n"
-             //"set fcs/right-engine-pitch-cmd-norm %f\n"
-             //"set fcs/left-engine-pitch-cmd-norm %f\n"
+             "set fcs/right-engine-pitch-cmd-norm %f\n"
+             "set fcs/left-engine-pitch-cmd-norm %f\n"
+
+
              "set atmosphere/psiw-rad %f\n"
              "set atmosphere/wind-mag-fps %f\n"
              "set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps %f\n"
              "set atmosphere/turbulence/milspec/severity %f\n"
              "iterate 1\n",
              elevator, rudder,
-			 throttle_r, throttle_l,
-			 throttle_m,
-			 //tilt_r, tilt_l,
+    	     throttle_r, throttle_l,
+    	     throttle_m,
+    	     tilt_r, tilt_l,
+         // aileron, elevator, rudder, throttle,
              radians(input.wind.direction),
              wind_speed_fps,
              wind_speed_fps/3,
